@@ -57,6 +57,7 @@ class Home extends Component {
     });
   }
   componentDidMount() {
+  	console.log("À");
     this.getListToDo();
     const self=this;
     setInterval(function(){ 
