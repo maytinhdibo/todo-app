@@ -1,14 +1,15 @@
 export const dataAPI = () => {
-    return fetch("https://uetcc-todo-app.herokuapp.com/draft")
+    return fetch("https://uetcc-todo-app.herokuapp.com/todos?token=" + localStorage.auth)
         .then(reponsive => {
             return reponsive.json();
         });
 }
 export const createTodo = (text) => {
-    const request = new Request("https://uetcc-todo-app.herokuapp.com/draft", {
+    const request = new Request("https://uetcc-todo-app.herokuapp.com/todos", {
         method: "POST",
         headers: {
-            'Content-Type': ' application/json'
+            'Content-Type': ' application/json',
+            'Authorization': localStorage.auth
         },
         body: JSON.stringify({
             title: text
@@ -20,9 +21,9 @@ export const createTodo = (text) => {
         });
 }
 export const deleteTodo = (id) => {
-    const url = `https://uetcc-todo-app.herokuapp.com/draft/${id}`;
+    const url = "https://uetcc-todo-app.herokuapp.com/todos/"+id+"?token=" + localStorage.auth;
     const request = new Request(url, {
-        method: 'DELETE'
+        method: 'DELETE',
     });
 
     return fetch(request)
@@ -31,7 +32,7 @@ export const deleteTodo = (id) => {
         });
 };
 export const toggleTodo = (id) => {
-    const url = `https://uetcc-todo-app.herokuapp.com/draft/${id}/toggle`;
+    const url = "https://uetcc-todo-app.herokuapp.com/todos/"+id+"/toggle?token=" + localStorage.auth;
     const request = new Request(url, {
         method: 'POST'
     });

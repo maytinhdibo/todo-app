@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import './../App.css';
 import './../Home.css';
 import List from './../components/list.js';
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Header from './../components/input-header.js';
-import {alertText,offalertText, alertAtHome} from './../dom.js';
+import { alertText, offalertText, alertAtHome } from './../dom.js';
 import { dataAPI, createTodo, deleteTodo, toggleTodo } from './../services/API.js';
-import {Route,Switch} from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Info from './Info';
 var jsonData = [];
 const datasample = [
@@ -28,7 +28,7 @@ const datasample = [
   }
 ]
 
-var action="Load";
+var action = "Load";
 
 class Home extends Component {
   state = [];
@@ -57,23 +57,19 @@ class Home extends Component {
     });
   }
   componentDidMount() {
-  	console.log("À");
     this.getListToDo();
-    const self=this;
-    setInterval(function(){ 
-      dataAPI().then(object=>{
-        if(JSON.stringify(object.data)==JSON.stringify(self.state.data)){
-          console.log("Không đổi");
-          console.log(object.data);
-          console.log(self.state.data);
-        }else{
-          console.log("Đổi");
-          self.setState({
-            data: object.data
-          });
-        }
-      })
-     }, 1000);
+    // const self = this;
+    // setInterval(function () {
+    //   dataAPI().then(object => {
+    //     if (JSON.stringify(object.data) == JSON.stringify(self.state.data)) {
+    //       //dont change
+    //     } else {
+    //       self.setState({
+    //         data: object.data
+    //       });
+    //     }
+    //   })
+    // }, 1000);
   }
   addNew = (text) => {
     createTodo(text).then(() => {
@@ -92,25 +88,32 @@ class Home extends Component {
     });
     alertText("Checking....");
   }
+  logout = ()=>{
+    localStorage.removeItem("auth");
+    this.props.changeAuth(false);
+  }
   render() {
+    const { auth } = this.props;
+    if (!auth) {
+      return <Redirect to="/" />;
+    }
     return (
       <div className="App">
         <header>
           <span id="appname">MY TO DO LIST</span>
           <div id="account">
-          <span class="icon">C</span>
-          <span class="name">Trần Mạnh Cường</span>
-          <Link to="/home/info"> <span class="logout">App Info</span></Link>
-         <Link to="/"> <span class="logout">Logout</span></Link>
+            <span className="icon">{localStorage.name.split(" ")[localStorage.name.split(" ").length-1][0]}</span>
+            <span className="name">{localStorage.name}</span>
+            <Link to="/home/info"> <span class="logout">App Info</span></Link>
+            <span onClick={this.logout} class="logout">Logout</span>
           </div>
         </header>
         <Header addNew={this.addNew} text={this.state.text} />
         <List data={this.state.data} removeItem={this.removeItem} doneItem={this.doneItem} />
+
         
-        <Switch>
-          <Route path="/home/info" component={Info}/>
-          </Switch>
-         
+          <Route path="/home/info" component={Info} />
+
       </div>
     );
   }

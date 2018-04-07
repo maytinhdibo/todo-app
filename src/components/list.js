@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import alertText from './../dom.js';
 
 class ListItem extends Component {
     removeItem = (e) => {
